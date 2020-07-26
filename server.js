@@ -25,6 +25,30 @@ const top50Handler = (req, res) => {
   });
 };
 
+const popularArtistHandler = (req, res) => {
+  let currentMostPopular = null;
+  let artists = {};
+  top50.forEach((song) => {
+    if (artists[song.artist] === undefined) {
+      artists[song.artist] = { name: song.artist, songs: [song] };
+    } else {
+      artists[song.artist].songs.push(song);
+    }
+    let artist = artists[song.artist];
+    currentMostPopular =
+      currentMostPopular === null
+        ? (currentMostPopular = artist)
+        : currentMostPopular.songs.length >= artist.songs.length
+        ? currentMostPopular
+        : artist;
+    console.log("most popular artist is", currentMostPopular);
+  });
+  res.render("pages/top50", {
+    title: "Most Popular Artist",
+    top50: currentMostPopular.songs,
+  });
+};
+
 const individualSongHandler = (req, res) => {
   const id = req.params.id;
   console.log("reqparams", req.params);
@@ -55,6 +79,7 @@ app.set("view engine", "ejs");
 
 app.get("/top50", top50Handler);
 app.get("/top50/song/:id", individualSongHandler);
+app.get("/top50/popular-artist", popularArtistHandler);
 
 // handle 404s
 app.get("*", (req, res) => {

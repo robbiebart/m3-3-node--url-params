@@ -1,4 +1,5 @@
 <%- include('../partials/header') %>
 <%- include('../partials/song') %>
-<a href="/top50/song/<%- %>"
+<a href="/top50/song/<%= song.rank - 1 %>">Previous</a>
+<a href="/top50/song/<%= song.rank + 1 %>">Next</a>
 <%- include('../partials/footer') %>
