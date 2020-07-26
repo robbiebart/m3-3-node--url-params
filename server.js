@@ -10,20 +10,13 @@ const express = require("express");
 
 // <% top50.map((song)=>{ %>
 //     <li>
-//         <div class=rank><%-song.rank%></div> 
+//         <div class=rank><%-song.rank%></div>
 //         <div class=streams><%-song.streams%></div>
 //         <div class=title><%-song.title%></div>
 //         <div class=artist><%-song.artist%></div>
 //         <div class=pubDate><%-song.publicationDate%></div>
 //     </li>
 // <% }) %>
-
-const app = express();
-
-app.use(morgan("dev"));
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false }));
-app.set("view engine", "ejs");
 
 const top50Handler = (req, res) => {
   res.render("pages/top50", {
@@ -32,10 +25,36 @@ const top50Handler = (req, res) => {
   });
 };
 
+const individualSongHandler = (req, res) => {
+  const id = req.params.id;
+  console.log("reqparams", req.params);
+  const song = top50.find((song) => {
+    return song.rank == id;
+  });
+  console.log("song", song);
+  if (song !== undefined) {
+    res.render("pages/songpage", { title: song.title, song });
+  } else {
+    res.status(404);
+    res.render("pages/fourOhFour", {
+      path: req.originalUrl,
+      title: "Wrong song Id",
+    });
+  }
+};
+
+const app = express();
+
+app.use(morgan("dev"));
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
+app.set("view engine", "ejs");
+
 // endpoints here
 // res.render(view [, locals] [, callback])
 
 app.get("/top50", top50Handler);
+app.get("/top50/song/:id", individualSongHandler);
 
 // handle 404s
 app.get("*", (req, res) => {

@@ -1,5 +1,9 @@
 <%- include('../partials/header') %>
-<ul>
-    <%- include('../partials/song') %>
-</ul>
+    <ul>
+        <% top50.map((song)=>{ %>
+            <li>
+                <%- include('../partials/song', { song }) %>
+            </li>
+        <% }) %>
+    </ul>
 <%- include('../partials/footer') %>
